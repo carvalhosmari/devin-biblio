@@ -1,0 +1,84 @@
+COMPONENTE: LEITOR - Passo a Passo da Implementacao
+====================================================
+
+1. ESTRUTURA DO PROJETO
+   - Criacao do projeto Django "bibliomania" com comando django-admin startproject
+   - Criacao do app "leitor" com python manage.py startapp leitor
+   - Configuracao do .gitignore para Python/Django
+   - Configuracao do .env para variaveis de ambiente (banco de dados, secret key)
+   - Criacao do requirements.txt com dependencias e versoes
+   - Configuracao do ambiente virtual .venv
+
+2. CONFIGURACAO DO BANCO DE DADOS (Supabase PostgreSQL)
+   - Configuracao da conexao com Supabase em settings.py
+   - Variaveis de ambiente para credenciais do banco (DB_HOST, DB_USER, DB_PASSWORD, etc.)
+
+3. MODELO DE DADOS (leitor/models.py)
+   - Criacao do modelo Leitor com os campos:
+     * id (PrimaryKey, auto)
+     * nome (CharField, max_length=200)
+     * email (CharField, max_length=100)
+     * telefone (CharField, max_length=20, opcional)
+     * endereco (CharField, max_length=200, opcional)
+     * data_cadastro (DateTimeField, auto_now_add)
+     * ativo (BooleanField, default=True)
+   - Geracao da migration 0001_initial.py
+
+4. INTERFACES - INJECAO DE DEPENDENCIA (leitor/interfaces.py)
+   - ILeitorRepository: interface abstrata para acesso a dados
+     * criar(), atualizar(), listar_todos(), buscar_por_id(), buscar_por_email()
+   - ILeitorService: interface abstrata conforme especificacao
+     * cadastrar_leitor(), atualizar_leitor(), listar_leitores(), acessar_historico_leitor()
+
+5. REPOSITORIO (leitor/repositories.py)
+   - LeitorRepository: implementacao concreta de ILeitorRepository
+   - Utiliza Django ORM para operacoes no banco de dados
+
+6. SERVICO (leitor/services.py)
+   - LeitorService: implementacao concreta de ILeitorService
+   - Recebe ILeitorRepository via injecao de dependencia no construtor
+   - Regra de negocio: nao cadastrar leitor com email duplicado
+   - Regra de negocio: validacao de email unico ao atualizar
+
+7. CONTAINER DE INJECAO DE DEPENDENCIA (leitor/container.py)
+   - LeitorContainer: gerencia instancias dos componentes
+   - Padrao Singleton para repositorio e servico
+   - Metodo reset() para facilitar testes
+
+8. FORMULARIO (leitor/forms.py)
+   - LeitorForm: ModelForm do Django para o modelo Leitor
+   - Widgets Bootstrap para interface responsiva
+
+9. VIEWS (leitor/views.py)
+   - listar_leitores: lista todos os leitores (GET)
+   - cadastrar_leitor: cadastro de novo leitor (GET/POST)
+   - editar_leitor: edicao de leitor existente (GET/POST)
+   - perfil_leitor: perfil e historico de emprestimos (GET)
+   - Todas as views utilizam o servico via container de DI
+
+10. TEMPLATES (templates/)
+    - base.html: template base com navbar e Bootstrap 5
+    - leitor/listar.html: tabela de leitores com acoes
+    - leitor/cadastrar.html: formulario de cadastro
+    - leitor/editar.html: formulario de edicao
+    - leitor/perfil.html: perfil com historico de emprestimos
+
+11. ROTAS (leitor/urls.py)
+    - /leitor/ -> listar leitores
+    - /leitor/cadastrar/ -> cadastrar leitor
+    - /leitor/<id>/editar/ -> editar leitor
+    - /leitor/<id>/perfil/ -> perfil do leitor
+
+12. API REST - FastAPI (leitor/api.py)
+    - GET /api/leitores -> listar todos os leitores
+    - POST /api/leitores -> cadastrar novo leitor
+    - PUT /api/leitores/{id} -> atualizar leitor
+    - GET /api/leitores/{id} -> buscar leitor por ID
+    - GET /api/leitores/{id}/historico -> historico do leitor
+    - Schemas Pydantic para validacao de dados
+
+13. ADMIN (leitor/admin.py)
+    - Registro do modelo Leitor no Django Admin
+
+14. README.md
+    - Documentacao do projeto com instrucoes de instalacao e uso
