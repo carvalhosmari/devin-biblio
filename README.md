@@ -6,58 +6,64 @@ Sistema de gestao de biblioteca desenvolvido com Django, FastAPI e React.
 
 O projeto segue o padrao **MVT (Model-View-Template)**:
 
-- **Model**: Django ORM — modelos de dados definidos em cada app Django (`leitor`, `livro`, `emprestimo`), responsaveis pela persistencia e regras de negocio no banco de dados.
-- **View**: FastAPI — camada de API REST que expoe os endpoints para consumo do frontend. Os routers FastAPI atuam como a camada View, processando requisicoes e retornando respostas.
-- **Template**: React + TypeScript + Tailwind CSS — camada de apresentacao que consome a API e renderiza a interface do usuario.
+- **Model** (`models/`): Django ORM — modelos de dados para as entidades da biblioteca (leitor, livro, emprestimo).
+- **View** (`views/`): FastAPI — endpoints da API REST que processam requisicoes e retornam respostas.
+- **Template** (`templates/`): React + TypeScript + Tailwind CSS — camada de apresentacao que consome a API e renderiza a interface do usuario.
 
 ## Estrutura do Projeto
 
 ```
 bibliomania/
-├── backend/
-│   ├── bibliomania/           # Projeto Django (settings, urls, wsgi, asgi)
-│   ├── leitor/                # App Django - Componente Leitor
-│   │   ├── models.py          # Model: definicao da entidade Leitor
-│   │   ├── interfaces.py      # Interface ILeitor (contrato)
-│   │   ├── services.py        # Service: logica de negocio (implementa ILeitor)
-│   │   ├── views.py           # View Django (opcional)
-│   │   └── admin.py           # Configuracao Django Admin
-│   ├── livro/                 # App Django - Componente Livro
-│   │   ├── models.py          # Model: definicao da entidade Livro
-│   │   ├── interfaces.py      # Interface ILivro (contrato)
-│   │   ├── services.py        # Service: logica de negocio (implementa ILivro)
-│   │   ├── views.py           # View Django (opcional)
-│   │   └── admin.py           # Configuracao Django Admin
-│   ├── emprestimo/            # App Django - Componente Emprestimo
-│   │   ├── models.py          # Model: definicao da entidade Emprestimo
-│   │   ├── interfaces.py      # Interface IEmprestimo (contrato)
-│   │   ├── services.py        # Service: logica de negocio (implementa IEmprestimo)
-│   │   ├── views.py           # View Django (opcional)
-│   │   └── admin.py           # Configuracao Django Admin
-│   ├── api/                   # FastAPI - Camada View (API REST)
-│   │   ├── main.py            # Ponto de entrada FastAPI
-│   │   ├── dependencies.py    # Container de injecao de dependencia
-│   │   └── routers/           # Routers por componente
-│   │       ├── leitor.py      # Endpoints do Leitor
-│   │       ├── livro.py       # Endpoints do Livro
-│   │       └── emprestimo.py  # Endpoints do Emprestimo
-│   ├── manage.py              # CLI Django
-│   ├── requirements.txt       # Dependencias Python
-│   └── .env.example           # Exemplo de variaveis de ambiente
-├── frontend/
+├── bibliomania/               # Projeto Django (settings, urls, wsgi, asgi)
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   └── asgi.py
+├── models/                    # M - Camada Model (Django ORM)
+│   ├── __init__.py
+│   ├── leitor.py              # Model Leitor
+│   ├── livro.py               # Model Livro
+│   └── emprestimo.py          # Model Emprestimo
+├── views/                     # V - Camada View (FastAPI endpoints)
+│   ├── __init__.py
+│   ├── leitor.py              # Endpoints do Leitor
+│   ├── livro.py               # Endpoints do Livro
+│   └── emprestimo.py          # Endpoints do Emprestimo
+├── templates/                 # T - Camada Template (React)
 │   ├── src/
-│   │   ├── components/        # Componentes React (Template layer)
+│   │   ├── components/        # Componentes React
 │   │   │   ├── Leitor/        # Componente Leitor
 │   │   │   ├── Livro/         # Componente Livro
 │   │   │   └── Emprestimo/    # Componente Emprestimo
+│   │   ├── pages/             # Paginas da aplicacao
 │   │   ├── services/          # Servicos de comunicacao com a API
 │   │   ├── types/             # Tipos TypeScript
-│   │   ├── pages/             # Paginas da aplicacao
 │   │   ├── App.tsx            # Componente raiz
 │   │   └── main.tsx           # Ponto de entrada
-│   ├── .env.example           # Exemplo de variaveis de ambiente
 │   ├── package.json           # Dependencias Node
-│   └── tsconfig.json          # Configuracao TypeScript
+│   ├── tsconfig.json          # Configuracao TypeScript
+│   └── .env.example           # Exemplo de variaveis de ambiente
+├── services/                  # Logica de negocio
+│   ├── __init__.py
+│   ├── interfaces/            # Contratos (ABCs)
+│   │   ├── __init__.py
+│   │   ├── ileitor.py         # Interface ILeitor
+│   │   ├── ilivro.py          # Interface ILivro
+│   │   └── iemprestimo.py     # Interface IEmprestimo
+│   ├── leitor_service.py      # Implementacao ILeitor
+│   ├── livro_service.py       # Implementacao ILivro
+│   └── emprestimo_service.py  # Implementacao IEmprestimo
+├── schemas/                   # DTOs Pydantic
+│   ├── __init__.py
+│   ├── leitor.py              # Schemas do Leitor
+│   ├── livro.py               # Schemas do Livro
+│   └── emprestimo.py          # Schemas do Emprestimo
+├── dependencies.py            # Container de injecao de dependencia
+├── main.py                    # Ponto de entrada FastAPI
+├── manage.py                  # CLI Django
+├── requirements.txt           # Dependencias Python
+├── .env.example               # Exemplo de variaveis de ambiente
 ├── .gitignore
 └── README.md
 ```
@@ -77,21 +83,21 @@ Gerencia os livros da biblioteca (cadastro via ISBN com Google Books API, edicao
 
 O projeto utiliza o mecanismo nativo de **Dependency Injection do FastAPI** (`Depends`) para desacoplar as camadas:
 
-1. **Interfaces** (`interfaces.py`): Cada componente define uma interface abstrata (ABC) que estabelece o contrato do servico (ex: `ILeitor`, `ILivro`, `IEmprestimo`).
-2. **Services** (`services.py`): Implementam as interfaces, contendo a logica de negocio. Acessam os Models Django para persistencia.
-3. **Dependencies** (`api/dependencies.py`): Configura e fornece as instancias dos services para os routers via `Depends()`.
-4. **Routers** (`api/routers/`): Recebem os services injetados como parametros, sem conhecer a implementacao concreta.
+1. **Interfaces** (`services/interfaces/`): Cada componente define uma interface abstrata (ABC) que estabelece o contrato do servico (ex: `ILeitor`, `ILivro`, `IEmprestimo`).
+2. **Services** (`services/*_service.py`): Implementam as interfaces, contendo a logica de negocio. Acessam os Models Django para persistencia.
+3. **Dependencies** (`dependencies.py`): Configura e fornece as instancias dos services para as views via `Depends()`.
+4. **Views** (`views/`): Recebem os services injetados como parametros, sem conhecer a implementacao concreta.
 
 Esse mecanismo permite:
-- Substituir implementacoes de servico sem alterar os routers
+- Substituir implementacoes de servico sem alterar as views
 - Facilitar testes unitarios com mocks
 - Manter baixo acoplamento entre camadas
 
 ## Como o Acoplamento e Evitado
 
-- **Interfaces abstratas**: Os routers dependem apenas das interfaces, nao das implementacoes concretas.
+- **Interfaces abstratas**: As views dependem apenas das interfaces, nao das implementacoes concretas.
 - **Injecao via FastAPI Depends**: Os services sao injetados nos endpoints, evitando instanciacao direta.
-- **Separacao de camadas**: Model (Django ORM), View (FastAPI routers) e Template (React) sao independentes.
+- **Separacao de camadas**: Model (`models/`), View (`views/`) e Template (`templates/`) sao diretorios independentes no mesmo projeto.
 - **Servicos independentes**: Cada componente (Leitor, Livro, Emprestimo) possui seu proprio service e interface, sem dependencias cruzadas diretas.
 
 ## Comunicacao entre Componentes
@@ -99,11 +105,11 @@ Esse mecanismo permite:
 A comunicacao segue o fluxo:
 
 ```
-[Frontend React] --HTTP--> [FastAPI Routers] --Depends--> [Services] --ORM--> [Django Models] --SQL--> [Supabase PostgreSQL]
+[Templates/React] --HTTP--> [Views/FastAPI] --Depends--> [Services] --ORM--> [Models/Django] --SQL--> [Supabase PostgreSQL]
 ```
 
-1. O **Frontend** (React) faz requisicoes HTTP para a **API REST** (FastAPI).
-2. Os **Routers** (FastAPI) delegam a logica para os **Services** injetados via `Depends`.
+1. Os **Templates** (React) fazem requisicoes HTTP para as **Views** (FastAPI).
+2. As **Views** (FastAPI) delegam a logica para os **Services** injetados via `Depends`.
 3. Os **Services** utilizam os **Models** (Django ORM) para acessar o banco de dados.
 4. O **banco de dados** (Supabase PostgreSQL) persiste os dados.
 
@@ -114,11 +120,9 @@ A comunicacao segue o fluxo:
 - Node.js 18+
 - npm
 
-### Backend
+### Backend (Models + Views + Services)
 
 ```bash
-cd backend
-
 # Criar ambiente virtual
 python -m venv .venv
 source .venv/bin/activate  # Linux/macOS
@@ -134,13 +138,13 @@ cp .env.example .env
 python manage.py migrate
 
 # Iniciar servidor FastAPI
-uvicorn api.main:app --reload --port 8000
+uvicorn main:app --reload --port 8000
 ```
 
-### Frontend
+### Templates (Frontend React)
 
 ```bash
-cd frontend
+cd templates
 
 # Instalar dependencias
 npm install

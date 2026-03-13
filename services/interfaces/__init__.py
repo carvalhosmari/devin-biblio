@@ -1,0 +1,3 @@
+"""
+Interfaces (contratos) dos servicos.
+"""
