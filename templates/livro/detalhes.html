@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ detalhes.titulo }} - Bibliomania{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h4><i class="bi bi-book"></i> {{ detalhes.titulo }}</h4>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th>ISBN:</th>
+                        <td><code>{{ detalhes.isbn }}</code></td>
+                    </tr>
+                    <tr>
+                        <th>Titulo:</th>
+                        <td>{{ detalhes.titulo }}</td>
+                    </tr>
+                    <tr>
+                        <th>Autores:</th>
+                        <td>{{ detalhes.autores }}</td>
+                    </tr>
+                    <tr>
+                        <th>Pais:</th>
+                        <td>{{ detalhes.pais|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Editora:</th>
+                        <td>{{ detalhes.editora|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Edicao:</th>
+                        <td>{{ detalhes.edicao|default:"-" }}</td>
+                    </tr>
+                </table>
+                <a href="{% url 'livro:listar' %}" class="btn btn-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h4><i class="bi bi-box-seam"></i> Estoque</h4>
+            </div>
+            <div class="card-body">
+                <div class="row text-center mb-3">
+                    <div class="col-4">
+                        <h3>{{ detalhes.total_exemplares }}</h3>
+                        <small class="text-muted">Total</small>
+                    </div>
+                    <div class="col-4">
+                        <h3 class="text-success">{{ detalhes.disponiveis }}</h3>
+                        <small class="text-muted">Disponiveis</small>
+                    </div>
+                    <div class="col-4">
+                        <h3 class="text-danger">{{ detalhes.emprestados }}</h3>
+                        <small class="text-muted">Emprestados</small>
+                    </div>
+                </div>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Status</th>
+                            <th>Acoes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for exemplar in detalhes.exemplares %}
+                        <tr>
+                            <td>{{ exemplar.id }}</td>
+                            <td>
+                                {% if exemplar.status == 'disponivel' %}
+                                    <span class="badge bg-success">Disponivel</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Emprestado</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'livro:editar' exemplar.id %}"
+                                   class="btn btn-sm btn-warning" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

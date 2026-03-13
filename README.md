@@ -39,7 +39,24 @@ Gerencia os emprestimos de livros da biblioteca.
 - Devolucao e emprestimo atualizam status do livro automaticamente
 - Renovar encerra o emprestimo atual e cria um novo com novas datas
 
-### 3. Livro *(a implementar - modelo minimo criado para FK)*
+### 3. Livro
+Gerencia o acervo de livros da biblioteca com integracao Google Books API.
+
+**Funcionalidades:**
+- Cadastrar livro(s) por ISBN (busca automatica na API Google Books)
+- Editar informacoes do livro
+- Listar livros agrupados por ISBN
+- Pesquisar livros por titulo, autor, editora ou ISBN
+- Visualizar detalhes e estoque por ISBN
+- Atualizar estoque (disponivel <-> emprestado)
+- Validar ISBN (ISBN-10 e ISBN-13)
+
+**Regras de Negocio:**
+- O usuario informa o ISBN e a quantidade de exemplares a cadastrar
+- As informacoes do livro sao consumidas automaticamente da API Google Books
+- Apenas ISBNs validos sao aceitos (validacao ISBN-10 e ISBN-13)
+- Livros sao agrupados por ISBN na listagem
+- Cada exemplar possui um ID unico e status individual
 
 ## Requisitos
 
@@ -89,6 +106,8 @@ python manage.py runserver
 uvicorn leitor.api:api --reload --port 8001
 # API de Emprestimos
 uvicorn emprestimo.api:api --reload --port 8002
+# API de Livros
+uvicorn livro.api:api --reload --port 8003
 ```
 
 ## Variaveis de Ambiente
@@ -102,6 +121,7 @@ uvicorn emprestimo.api:api --reload --port 8002
 | `DB_PASSWORD` | Senha do banco de dados |
 | `DB_HOST` | Host do banco de dados |
 | `DB_PORT` | Porta do banco de dados |
+| `GOOGLE_BOOKS_API_KEY` | Chave da API Google Books |
 
 ## API REST (FastAPI)
 
@@ -122,6 +142,16 @@ uvicorn emprestimo.api:api --reload --port 8002
 | POST | `/api/emprestimos/{id}/devolver` | Registrar devolucao |
 | POST | `/api/emprestimos/{id}/renovar` | Renovar emprestimo |
 | GET | `/api/emprestimos/{id}/prazo` | Verificar prazo e multa |
+
+### Livros (porta 8003)
+| Metodo | Endpoint | Descricao |
+|---|---|---|
+| GET | `/api/livros` | Listar livros (filtro: ?filtro=) |
+| POST | `/api/livros` | Cadastrar livro(s) via ISBN |
+| PUT | `/api/livros/{id}` | Editar livro |
+| GET | `/api/livros/isbn/{isbn}` | Detalhes por ISBN |
+| POST | `/api/livros/{id}/estoque` | Atualizar estoque |
+| GET | `/api/livros/validar/{isbn}` | Validar ISBN |
 
 ## Estrutura do Projeto
 
@@ -153,13 +183,22 @@ devin-biblio/
 │   ├── urls.py           # Rotas
 │   ├── api.py            # Endpoints FastAPI
 │   └── admin.py          # Admin Django
-├── livro/                # Componente Livro (modelo minimo para FK)
-│   ├── models.py
-│   └── admin.py
+├── livro/                # Componente Livro
+│   ├── interfaces.py     # Interfaces abstratas (DI)
+│   ├── repositories.py   # Implementacao do repositorio
+│   ├── services.py       # Logica de negocio + Google Books API
+│   ├── container.py      # Container de injecao de dependencia
+│   ├── models.py         # Modelo de dados
+│   ├── views.py          # Views Django (MVT)
+│   ├── forms.py          # Formularios
+│   ├── urls.py           # Rotas
+│   ├── api.py            # Endpoints FastAPI
+│   └── admin.py          # Admin Django
 ├── templates/            # Templates HTML
 │   ├── base.html
 │   ├── leitor/
-│   └── emprestimo/
+│   ├── emprestimo/
+│   └── livro/
 ├── requirements.txt
 ├── manage.py
 └── .env
