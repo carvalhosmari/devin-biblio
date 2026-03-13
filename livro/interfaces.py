@@ -60,3 +60,7 @@ class ILivroService(ABC):
     @abstractmethod
     def validar_livro(self, isbn: str) -> bool:
         ...
+
+    @abstractmethod
+    def buscar_livro_por_id(self, id_livro: int) -> Optional[object]:
+        ...
