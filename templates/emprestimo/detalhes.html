@@ -77,16 +77,20 @@
                 </table>
                 <div class="d-flex gap-2">
                     {% if emprestimo.status != 'devolvido' and emprestimo.status != 'renovado' %}
-                    <a href="{% url 'emprestimo:devolver' emprestimo.id %}" 
-                       class="btn btn-success btn-sm"
-                       onclick="return confirm('Confirmar devolucao?')">
-                        <i class="bi bi-box-arrow-in-left"></i> Devolver
-                    </a>
-                    <a href="{% url 'emprestimo:renovar' emprestimo.id %}" 
-                       class="btn btn-warning btn-sm"
-                       onclick="return confirm('Confirmar renovacao?')">
-                        <i class="bi bi-arrow-repeat"></i> Renovar
-                    </a>
+                    <form method="post" action="{% url 'emprestimo:devolver' emprestimo.id %}" 
+                          class="d-inline" onsubmit="return confirm('Confirmar devolucao?')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="bi bi-box-arrow-in-left"></i> Devolver
+                        </button>
+                    </form>
+                    <form method="post" action="{% url 'emprestimo:renovar' emprestimo.id %}" 
+                          class="d-inline" onsubmit="return confirm('Confirmar renovacao?')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning btn-sm">
+                            <i class="bi bi-arrow-repeat"></i> Renovar
+                        </button>
+                    </form>
                     {% endif %}
                     <a href="{% url 'emprestimo:listar' %}" class="btn btn-secondary btn-sm">
                         <i class="bi bi-arrow-left"></i> Voltar

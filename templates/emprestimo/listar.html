@@ -55,16 +55,20 @@
                         <i class="bi bi-eye"></i>
                     </a>
                     {% if info.emprestimo.status != 'renovado' %}
-                    <a href="{% url 'emprestimo:devolver' info.emprestimo.id %}" 
-                       class="btn btn-sm btn-success" title="Devolver"
-                       onclick="return confirm('Confirmar devolucao?')">
-                        <i class="bi bi-box-arrow-in-left"></i>
-                    </a>
-                    <a href="{% url 'emprestimo:renovar' info.emprestimo.id %}" 
-                       class="btn btn-sm btn-warning" title="Renovar"
-                       onclick="return confirm('Confirmar renovacao?')">
-                        <i class="bi bi-arrow-repeat"></i>
-                    </a>
+                    <form method="post" action="{% url 'emprestimo:devolver' info.emprestimo.id %}" 
+                          class="d-inline" onsubmit="return confirm('Confirmar devolucao?')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-success" title="Devolver">
+                            <i class="bi bi-box-arrow-in-left"></i>
+                        </button>
+                    </form>
+                    <form method="post" action="{% url 'emprestimo:renovar' info.emprestimo.id %}" 
+                          class="d-inline" onsubmit="return confirm('Confirmar renovacao?')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-warning" title="Renovar">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </button>
+                    </form>
                     {% endif %}
                 </td>
             </tr>

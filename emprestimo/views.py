@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 from emprestimo.container import EmprestimoContainer
 from emprestimo.forms import RegistrarEmprestimoForm
@@ -63,6 +64,7 @@ def registrar_emprestimo(request):
     return render(request, 'emprestimo/registrar.html', {'form': form})
 
 
+@require_POST
 def registrar_devolucao(request, id_emprestimo):
     """Registra a devolucao de um livro."""
     service = EmprestimoContainer.get_service()
@@ -81,6 +83,7 @@ def registrar_devolucao(request, id_emprestimo):
     return redirect('emprestimo:listar')
 
 
+@require_POST
 def renovar_emprestimo(request, id_emprestimo):
     """Renova o emprestimo por mais 14 dias."""
     service = EmprestimoContainer.get_service()
