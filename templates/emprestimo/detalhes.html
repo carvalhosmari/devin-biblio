@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes Emprestimo #{{ emprestimo.id }} - Bibliomania{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header {% if atrasado %}bg-danger text-white{% else %}bg-info text-white{% endif %}">
+                <h4>
+                    <i class="bi bi-journal-text"></i> 
+                    Emprestimo #{{ emprestimo.id }}
+                    {% if atrasado %}
+                        <span class="badge bg-warning text-dark">ATRASADO</span>
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th>Leitor:</th>
+                        <td>
+                            <a href="{% url 'leitor:perfil' emprestimo.id_leitor.id %}">
+                                {{ emprestimo.id_leitor.nome }}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Livro:</th>
+                        <td>{{ emprestimo.id_livro.titulo }} (ISBN: {{ emprestimo.id_livro.isbn }})</td>
+                    </tr>
+                    <tr>
+                        <th>Data Emprestimo:</th>
+                        <td>{{ emprestimo.data_emprestimo|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Data Limite:</th>
+                        <td>{{ emprestimo.data_limite|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Data Devolucao:</th>
+                        <td>{{ emprestimo.data_devolucao|date:"d/m/Y H:i"|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status:</th>
+                        <td>
+                            {% if emprestimo.status == 'ativo' %}
+                                <span class="badge bg-success">Ativo</span>
+                            {% elif emprestimo.status == 'atrasado' %}
+                                <span class="badge bg-danger">Atrasado</span>
+                            {% elif emprestimo.status == 'devolvido' %}
+                                <span class="badge bg-secondary">Devolvido</span>
+                            {% elif emprestimo.status == 'renovado' %}
+                                <span class="badge bg-warning text-dark">Renovado</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Renovacoes:</th>
+                        <td>{{ emprestimo.renovacoes }} / 2</td>
+                    </tr>
+                    {% if atrasado %}
+                    <tr>
+                        <th>Dias de atraso:</th>
+                        <td><span class="text-danger fw-bold">{{ dias_atraso }} dia(s)</span></td>
+                    </tr>
+                    <tr>
+                        <th>Multa estimada:</th>
+                        <td><span class="text-danger fw-bold">R$ {{ multa }}</span></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <th>Dias restantes:</th>
+                        <td><span class="text-success">{{ dias_restantes }} dia(s)</span></td>
+                    </tr>
+                    {% endif %}
+                </table>
+                <div class="d-flex gap-2">
+                    {% if emprestimo.status != 'devolvido' and emprestimo.status != 'renovado' %}
+                    <a href="{% url 'emprestimo:devolver' emprestimo.id %}" 
+                       class="btn btn-success btn-sm"
+                       onclick="return confirm('Confirmar devolucao?')">
+                        <i class="bi bi-box-arrow-in-left"></i> Devolver
+                    </a>
+                    <a href="{% url 'emprestimo:renovar' emprestimo.id %}" 
+                       class="btn btn-warning btn-sm"
+                       onclick="return confirm('Confirmar renovacao?')">
+                        <i class="bi bi-arrow-repeat"></i> Renovar
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'emprestimo:listar' %}" class="btn btn-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
