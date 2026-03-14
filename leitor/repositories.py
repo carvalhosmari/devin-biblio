@@ -31,8 +31,8 @@ class LeitorRepository(ILeitorRepository):
         except Leitor.DoesNotExist:
             return None
 
-    def buscar_por_email(self, email: str) -> Optional[Leitor]:
+    def buscar_por_cpf(self, cpf: str) -> Optional[Leitor]:
         try:
-            return Leitor.objects.get(email=email)
+            return Leitor.objects.get(cpf=cpf)
         except Leitor.DoesNotExist:
             return None

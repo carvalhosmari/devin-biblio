@@ -64,7 +64,11 @@ def perfil_leitor(request, id_leitor):
         messages.error(request, 'Leitor nao encontrado.')
         return redirect('leitor:listar')
 
+    from emprestimo.container import EmprestimoContainer
+    emprestimo_service = EmprestimoContainer.get_service()
+    emprestimos = emprestimo_service.buscar_emprestimos_leitor(id_leitor)
+
     return render(request, 'leitor/perfil.html', {
         'leitor': perfil['leitor'],
-        'emprestimos': perfil['emprestimos'],
+        'emprestimos': emprestimos,
     })
