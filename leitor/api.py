@@ -14,6 +14,7 @@ api = FastAPI(title="Bibliomania API", version="1.0.0")
 
 class LeitorCreateSchema(BaseModel):
     nome: str
+    cpf: str
     email: str
     telefone: str | None = None
     endereco: str | None = None
@@ -22,6 +23,7 @@ class LeitorCreateSchema(BaseModel):
 
 class LeitorUpdateSchema(BaseModel):
     nome: str | None = None
+    cpf: str | None = None
     email: str | None = None
     telefone: str | None = None
     endereco: str | None = None
@@ -31,6 +33,7 @@ class LeitorUpdateSchema(BaseModel):
 class LeitorResponseSchema(BaseModel):
     id: int
     nome: str
+    cpf: str
     email: str
     telefone: str | None = None
     endereco: str | None = None
@@ -45,6 +48,7 @@ def _leitor_to_dict(leitor) -> dict:
     return {
         'id': leitor.id,
         'nome': leitor.nome,
+        'cpf': leitor.cpf,
         'email': leitor.email,
         'telefone': leitor.telefone,
         'endereco': leitor.endereco,

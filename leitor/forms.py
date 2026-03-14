@@ -6,11 +6,15 @@ from leitor.models import Leitor
 class LeitorForm(forms.ModelForm):
     class Meta:
         model = Leitor
-        fields = ['nome', 'email', 'telefone', 'endereco', 'ativo']
+        fields = ['nome', 'cpf', 'email', 'telefone', 'endereco', 'ativo']
         widgets = {
             'nome': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Nome completo',
+            }),
+            'cpf': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '000.000.000-00',
             }),
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',

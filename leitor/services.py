@@ -13,12 +13,12 @@ class ILeitor(ILeitorService):
     def cadastrar_leitor(self, dados_leitor: dict) -> Leitor:
         """
         Cadastra um novo leitor.
-        Regra: O cadastro so ocorre se nao houver leitor com o mesmo email.
+        Regra: O cadastro so ocorre se nao houver leitor com o mesmo CPF.
         """
-        email = dados_leitor.get('email', '')
-        leitor_existente = self._repository.buscar_por_email(email)
+        cpf = dados_leitor.get('cpf', '')
+        leitor_existente = self._repository.buscar_por_cpf(cpf)
         if leitor_existente:
-            raise ValueError(f"Ja existe um leitor cadastrado com o email: {email}")
+            raise ValueError(f"Ja existe um leitor cadastrado com o CPF: {cpf}")
 
         dados_leitor.setdefault('ativo', True)
         return self._repository.criar(dados_leitor)
@@ -29,11 +29,11 @@ class ILeitor(ILeitorService):
         if not leitor:
             raise ValueError(f"Leitor com ID {id_leitor} nao encontrado.")
 
-        if 'email' in dados_leitor and dados_leitor['email'] != leitor.email:
-            existente = self._repository.buscar_por_email(dados_leitor['email'])
+        if 'cpf' in dados_leitor and dados_leitor['cpf'] != leitor.cpf:
+            existente = self._repository.buscar_por_cpf(dados_leitor['cpf'])
             if existente:
                 raise ValueError(
-                    f"Ja existe um leitor cadastrado com o email: {dados_leitor['email']}"
+                    f"Ja existe um leitor cadastrado com o CPF: {dados_leitor['cpf']}"
                 )
 
         return self._repository.atualizar(id_leitor, dados_leitor)
