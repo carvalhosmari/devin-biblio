@@ -26,8 +26,8 @@ class ILeitorRepository(ABC):
         ...
 
     @abstractmethod
-    def buscar_por_email(self, email: str) -> Optional[object]:
-        """Busca um leitor pelo email."""
+    def buscar_por_cpf(self, cpf: str) -> Optional[object]:
+        """Busca um leitor pelo CPF."""
         ...
 
 

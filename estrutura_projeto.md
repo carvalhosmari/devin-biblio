@@ -20,10 +20,10 @@
 | **leitor/** | | |
 | `leitor/__init__.py` | Back-end | Arquivo de inicializacao do pacote Python do app Leitor |
 | `leitor/apps.py` | Back-end | Configuracao do app Django Leitor (classe LeitorConfig) |
-| `leitor/models.py` | Back-end | Modelo de dados Leitor com campos: nome, email, telefone, endereco, data_cadastro, ativo |
+| `leitor/models.py` | Back-end | Modelo de dados Leitor com campos: nome, cpf (unico), email, telefone, endereco, data_cadastro, ativo |
 | `leitor/interfaces.py` | Back-end | Interfaces abstratas ILeitorRepository e ILeitorService que definem os contratos de acesso a dados e logica de negocio |
 | `leitor/repositories.py` | API | Implementacao concreta do ILeitorRepository usando Django ORM para operacoes CRUD no banco |
-| `leitor/services.py` | Back-end | Implementacao concreta do ILeitorService com regras de negocio (validacao de email unico, historico de emprestimos) |
+| `leitor/services.py` | Back-end | Implementacao concreta do ILeitorService com regras de negocio (validacao de CPF unico, historico de emprestimos) |
 | `leitor/container.py` | Back-end | Container de injecao de dependencia (Singleton) que instancia e fornece o repositorio e servico do Leitor |
 | `leitor/forms.py` | Front-End | Formularios Django (CadastrarLeitorForm, EditarLeitorForm) para validacao de dados de entrada |
 | `leitor/views.py` | API | Views Django que processam requisicoes HTTP e renderizam templates (listar, cadastrar, editar, perfil) |
@@ -32,6 +32,7 @@
 | `leitor/api.py` | API | Endpoints REST FastAPI para Leitor: GET/POST /api/leitores, GET/PUT /api/leitores/{id}, GET /api/leitores/{id}/historico |
 | `leitor/migrations/__init__.py` | Back-end | Arquivo de inicializacao do pacote de migracoes do Leitor |
 | `leitor/migrations/0001_initial.py` | Back-end | Migracao inicial que cria a tabela leitor no banco de dados |
+| `leitor/migrations/0002_add_cpf_field.py` | Back-end | Migracao que adiciona o campo CPF (unico) ao modelo Leitor |
 | **emprestimo/** | | |
 | `emprestimo/__init__.py` | Back-end | Arquivo de inicializacao do pacote Python do app Emprestimo |
 | `emprestimo/apps.py` | Back-end | Configuracao do app Django Emprestimo (classe EmprestimoConfig) |
