@@ -1,6 +1,6 @@
 from livro.interfaces import ILivroRepository, ILivroService
 from livro.repositories import LivroRepository
-from livro.services import LivroService
+from livro.services import ILivro
 
 
 class LivroContainer:
@@ -18,7 +18,7 @@ class LivroContainer:
     @classmethod
     def get_service(cls) -> ILivroService:
         if cls._service_instance is None:
-            cls._service_instance = LivroService(
+            cls._service_instance = ILivro(
                 repository=cls.get_repository()
             )
         return cls._service_instance

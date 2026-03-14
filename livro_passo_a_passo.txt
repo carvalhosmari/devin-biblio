@@ -23,7 +23,7 @@ COMPONENTE LIVRO - PASSO A PASSO DA IMPLEMENTACAO
    - Pesquisa com Q objects para busca em multiplos campos (titulo, autores, editora, isbn)
 
 3. SERVICO (livro/services.py)
-   - Implementacao concreta LivroService com injecao de dependencia (recebe ILivroRepository)
+   - Implementacao concreta ILivro com injecao de dependencia (recebe ILivroRepository)
    - Integracao com API Google Books:
      * Busca informacoes do livro pelo ISBN (titulo, autores, editora, edicao, pais)
      * Usa API Key configurada via variavel de ambiente GOOGLE_BOOKS_API_KEY
@@ -84,7 +84,7 @@ COMPONENTE LIVRO - PASSO A PASSO DA IMPLEMENTACAO
 ORDEM DE IMPLEMENTACAO:
 1. Interfaces abstratas (ILivroRepository, ILivroService)
 2. Repositorio concreto (LivroRepository)
-3. Servico com Google Books API e validacao ISBN (LivroService)
+3. Servico com Google Books API e validacao ISBN (ILivro)
 4. Container de injecao de dependencia (LivroContainer)
 5. Formularios Django (CadastrarLivroForm, EditarLivroForm, PesquisarLivroForm)
 6. Views Django (listar, cadastrar, editar, detalhes)

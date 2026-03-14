@@ -12,7 +12,7 @@ GOOGLE_BOOKS_API_KEY = os.environ.get('GOOGLE_BOOKS_API_KEY', '')
 GOOGLE_BOOKS_API_URL = 'https://www.googleapis.com/books/v1/volumes'
 
 
-class LivroService(ILivroService):
+class ILivro(ILivroService):
     """Implementacao concreta do servico de Livro com injecao de dependencia."""
 
     def __init__(self, repository: ILivroRepository):

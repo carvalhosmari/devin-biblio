@@ -4,19 +4,17 @@
 
 | Arquivo | Categoria | Funcao |
 |---|---|---|
-| `manage.py` | Back-end | Utilitario de linha de comando do Django para tarefas administrativas (runserver, migrate, etc.) |
-| `requirements.txt` | Back-end | Lista de dependencias Python do projeto (Django, FastAPI, psycopg2, requests, etc.) |
-| `.env` | Back-end | Variaveis de ambiente com credenciais do banco de dados e chave da API Google Books |
-| `.env.example` | Back-end | Modelo de variaveis de ambiente sem valores sensiveis, para referencia |
-| `.gitignore` | Back-end | Define arquivos e pastas ignorados pelo Git (venv, __pycache__, .env, db.sqlite3, etc.) |
-| `README.md` | Back-end | Documentacao geral do projeto com instrucoes de instalacao, arquitetura e endpoints |
+| `manage.py` | API | Utilitario de linha de comando do Django para tarefas administrativas (runserver, migrate, etc.) |
+| `requirements.txt` | API | Lista de dependencias Python do projeto (Django, FastAPI, psycopg2, requests, etc.) |
+| `.gitignore` | API | Define arquivos e pastas ignorados pelo Git (venv, __pycache__, .env, db.sqlite3, etc.) |
+| `README.md` | API | Documentacao geral do projeto com instrucoes de instalacao, arquitetura e endpoints |
 | `leitor_passo_a_passo.txt` | Back-end | Documentacao do passo a passo da implementacao do componente Leitor |
 | `emprestimo_passo_a_passo.txt` | Back-end | Documentacao do passo a passo da implementacao do componente Emprestimo |
 | `livro_passo_a_passo.txt` | Back-end | Documentacao do passo a passo da implementacao do componente Livro |
 | **bibliomania/** | | |
 | `bibliomania/__init__.py` | Back-end | Arquivo de inicializacao do pacote Python do projeto Django |
 | `bibliomania/settings.py` | Back-end | Configuracoes do Django: apps instalados, banco de dados (PostgreSQL/SQLite), templates, middleware |
-| `bibliomania/urls.py` | Back-end | Roteamento principal do Django: mapeia URLs para os apps leitor, emprestimo e livro |
+| `bibliomania/urls.py` | API | Roteamento principal do Django: mapeia URLs para os apps leitor, emprestimo e livro |
 | `bibliomania/wsgi.py` | Back-end | Ponto de entrada WSGI para deploy em servidores de producao |
 | `bibliomania/asgi.py` | Back-end | Ponto de entrada ASGI para deploy assincrono em servidores de producao |
 | **leitor/** | | |
@@ -24,15 +22,14 @@
 | `leitor/apps.py` | Back-end | Configuracao do app Django Leitor (classe LeitorConfig) |
 | `leitor/models.py` | Back-end | Modelo de dados Leitor com campos: nome, email, telefone, endereco, data_cadastro, ativo |
 | `leitor/interfaces.py` | Back-end | Interfaces abstratas ILeitorRepository e ILeitorService que definem os contratos de acesso a dados e logica de negocio |
-| `leitor/repositories.py` | Back-end | Implementacao concreta do ILeitorRepository usando Django ORM para operacoes CRUD no banco |
-| `leitor/services.py` | Back-end | Implementacao concreta do ILeitorService com regras de negocio (validacao de email unico, historico) |
+| `leitor/repositories.py` | API | Implementacao concreta do ILeitorRepository usando Django ORM para operacoes CRUD no banco |
+| `leitor/services.py` | Back-end | Implementacao concreta do ILeitorService com regras de negocio (validacao de email unico, historico de emprestimos) |
 | `leitor/container.py` | Back-end | Container de injecao de dependencia (Singleton) que instancia e fornece o repositorio e servico do Leitor |
-| `leitor/forms.py` | Back-end | Formularios Django (CadastrarLeitorForm, EditarLeitorForm) para validacao de dados de entrada |
-| `leitor/views.py` | Back-end | Views Django que processam requisicoes HTTP e renderizam templates (listar, cadastrar, editar, perfil) |
-| `leitor/urls.py` | Back-end | Rotas do app Leitor: /leitor/, /leitor/cadastrar/, /leitor/<id>/editar/, /leitor/<id>/perfil/ |
+| `leitor/forms.py` | Front-End | Formularios Django (CadastrarLeitorForm, EditarLeitorForm) para validacao de dados de entrada |
+| `leitor/views.py` | API | Views Django que processam requisicoes HTTP e renderizam templates (listar, cadastrar, editar, perfil) |
+| `leitor/urls.py` | API | Rotas do app Leitor: /leitor/, /leitor/cadastrar/, /leitor/<id>/editar/, /leitor/<id>/perfil/ |
 | `leitor/admin.py` | Back-end | Registro do modelo Leitor no Django Admin com configuracao de exibicao e filtros |
 | `leitor/api.py` | API | Endpoints REST FastAPI para Leitor: GET/POST /api/leitores, GET/PUT /api/leitores/{id}, GET /api/leitores/{id}/historico |
-| `leitor/tests.py` | Back-end | Arquivo de testes unitarios do app Leitor (placeholder) |
 | `leitor/migrations/__init__.py` | Back-end | Arquivo de inicializacao do pacote de migracoes do Leitor |
 | `leitor/migrations/0001_initial.py` | Back-end | Migracao inicial que cria a tabela leitor no banco de dados |
 | **emprestimo/** | | |
@@ -40,15 +37,14 @@
 | `emprestimo/apps.py` | Back-end | Configuracao do app Django Emprestimo (classe EmprestimoConfig) |
 | `emprestimo/models.py` | Back-end | Modelo de dados Emprestimo com FK para Leitor e Livro, campos: data_emprestimo, data_devolucao, data_limite, status, renovacoes |
 | `emprestimo/interfaces.py` | Back-end | Interfaces abstratas IEmprestimoRepository e IEmprestimoService que definem os contratos de acesso a dados e logica de negocio |
-| `emprestimo/repositories.py` | Back-end | Implementacao concreta do IEmprestimoRepository usando Django ORM para operacoes CRUD no banco |
-| `emprestimo/services.py` | Back-end | Implementacao concreta do IEmprestimoService com regras de negocio (prazo 7 dias, max 2 renovacoes, multa R$1/dia) |
-| `emprestimo/container.py` | Back-end | Container de injecao de dependencia (Singleton) que instancia e fornece o repositorio e servico do Emprestimo |
-| `emprestimo/forms.py` | Back-end | Formulario Django (RegistrarEmprestimoForm) com dropdowns dinamicos de leitores ativos e livros disponiveis |
-| `emprestimo/views.py` | Back-end | Views Django que processam requisicoes HTTP e renderizam templates (listar, registrar, devolver, renovar, detalhes) |
-| `emprestimo/urls.py` | Back-end | Rotas do app Emprestimo: /emprestimo/, /emprestimo/registrar/, /emprestimo/<id>/devolver/, etc. |
+| `emprestimo/repositories.py` | API | Implementacao concreta do IEmprestimoRepository usando Django ORM para operacoes CRUD no banco |
+| `emprestimo/services.py` | Back-end | Implementacao concreta do IEmprestimoService com regras de negocio (prazo 7 dias, max 2 renovacoes, multa R$1/dia, validacao de leitor e livro) |
+| `emprestimo/container.py` | Back-end | Container de injecao de dependencia (Singleton) que instancia e fornece o repositorio e servico do Emprestimo, injetando tambem o repositorio do Leitor |
+| `emprestimo/forms.py` | Front-End | Formulario Django (RegistrarEmprestimoForm) com dropdowns dinamicos de leitores ativos e livros disponiveis |
+| `emprestimo/views.py` | API | Views Django que processam requisicoes HTTP e renderizam templates (listar, registrar, devolver, renovar, detalhes) |
+| `emprestimo/urls.py` | API | Rotas do app Emprestimo: /emprestimo/, /emprestimo/registrar/, /emprestimo/<id>/devolver/, /emprestimo/<id>/renovar/, /emprestimo/<id>/detalhes/ |
 | `emprestimo/admin.py` | Back-end | Registro do modelo Emprestimo no Django Admin com configuracao de exibicao e filtros |
 | `emprestimo/api.py` | API | Endpoints REST FastAPI para Emprestimo: GET/POST /api/emprestimos, POST devolver/renovar, GET prazo |
-| `emprestimo/tests.py` | Back-end | Arquivo de testes unitarios do app Emprestimo (placeholder) |
 | `emprestimo/migrations/__init__.py` | Back-end | Arquivo de inicializacao do pacote de migracoes do Emprestimo |
 | `emprestimo/migrations/0001_initial.py` | Back-end | Migracao inicial que cria a tabela emprestimo no banco de dados com FKs para leitor e livro |
 | **livro/** | | |
@@ -56,15 +52,14 @@
 | `livro/apps.py` | Back-end | Configuracao do app Django Livro (classe LivroConfig) |
 | `livro/models.py` | Back-end | Modelo de dados Livro com campos: isbn, titulo, autores, pais, editora, edicao, status |
 | `livro/interfaces.py` | Back-end | Interfaces abstratas ILivroRepository e ILivroService que definem os contratos de acesso a dados e logica de negocio |
-| `livro/repositories.py` | Back-end | Implementacao concreta do ILivroRepository usando Django ORM, com pesquisa por Q objects em multiplos campos |
+| `livro/repositories.py` | API | Implementacao concreta do ILivroRepository usando Django ORM, com pesquisa por Q objects em multiplos campos |
 | `livro/services.py` | Back-end | Implementacao concreta do ILivroService com integracao Google Books API, validacao ISBN-10/13 e controle de estoque |
 | `livro/container.py` | Back-end | Container de injecao de dependencia (Singleton) que instancia e fornece o repositorio e servico do Livro |
-| `livro/forms.py` | Back-end | Formularios Django (CadastrarLivroForm, EditarLivroForm, PesquisarLivroForm) para validacao de dados |
-| `livro/views.py` | Back-end | Views Django que processam requisicoes HTTP e renderizam templates (listar, cadastrar, editar, detalhes) |
-| `livro/urls.py` | Back-end | Rotas do app Livro: /livro/, /livro/cadastrar/, /livro/<id>/editar/, /livro/isbn/<isbn>/detalhes/ |
+| `livro/forms.py` | Front-End | Formularios Django (CadastrarLivroForm, EditarLivroForm, PesquisarLivroForm) para validacao de dados |
+| `livro/views.py` | API | Views Django que processam requisicoes HTTP e renderizam templates (listar, cadastrar, editar, detalhes) |
+| `livro/urls.py` | API | Rotas do app Livro: /livro/, /livro/cadastrar/, /livro/<id>/editar/, /livro/isbn/<isbn>/detalhes/ |
 | `livro/admin.py` | Back-end | Registro do modelo Livro no Django Admin com configuracao de exibicao e filtros |
 | `livro/api.py` | API | Endpoints REST FastAPI para Livro: GET/POST /api/livros, PUT /api/livros/{id}, GET isbn/{isbn}, POST estoque, GET validar |
-| `livro/tests.py` | Back-end | Arquivo de testes unitarios do app Livro (placeholder) |
 | `livro/migrations/__init__.py` | Back-end | Arquivo de inicializacao do pacote de migracoes do Livro |
 | `livro/migrations/0001_initial.py` | Back-end | Migracao inicial que cria a tabela livro no banco de dados |
 | **templates/** | | |
@@ -123,14 +118,14 @@ Views/API  -->  Container.get_service()  -->  Service(repository)  -->  Reposito
 
 2. O **Container** verifica se ja existe uma instancia (Singleton). Se nao, cria o **Repository** e injeta no **Service**:
    ```python
-   cls._service_instance = LivroService(
+   cls._service_instance = ILivro(
        repository=cls.get_repository()
    )
    ```
 
 3. O **Service** recebe o repositorio pelo construtor e o armazena:
    ```python
-   class LivroService(ILivroService):
+   class ILivro(ILivroService):
        def __init__(self, repository: ILivroRepository):
            self._repository = repository
    ```
@@ -142,10 +137,34 @@ Views/API  -->  Container.get_service()  -->  Service(repository)  -->  Reposito
 ```
 livro/interfaces.py       -> Define ILivroRepository e ILivroService (contratos abstratos)
 livro/repositories.py     -> LivroRepository implementa ILivroRepository (acesso ao banco via Django ORM)
-livro/services.py         -> LivroService implementa ILivroService, recebe ILivroRepository no construtor
-livro/container.py        -> LivroContainer cria LivroRepository e injeta em LivroService (Singleton)
+livro/services.py         -> ILivro implementa ILivroService, recebe ILivroRepository no construtor
+livro/container.py        -> LivroContainer cria LivroRepository e injeta em ILivro (Singleton)
 livro/views.py            -> Usa LivroContainer.get_service() para obter o servico pronto para uso
 livro/api.py              -> Usa LivroContainer.get_service() para obter o servico pronto para uso
+```
+
+### Exemplo concreto: Componente Emprestimo
+
+O componente Emprestimo demonstra a injecao de dependencia com **multiplas dependencias**, pois depende tanto do seu proprio repositorio quanto do repositorio do Leitor:
+
+```
+emprestimo/interfaces.py       -> Define IEmprestimoRepository e IEmprestimoService (contratos abstratos)
+emprestimo/repositories.py     -> EmprestimoRepository implementa IEmprestimoRepository (acesso ao banco via Django ORM)
+emprestimo/services.py         -> IEmprestimo implementa IEmprestimoService, recebe IEmprestimoRepository e ILeitorRepository no construtor
+emprestimo/container.py        -> EmprestimoContainer cria EmprestimoRepository e injeta junto com LeitorContainer.get_repository() em IEmprestimo
+emprestimo/views.py            -> Usa EmprestimoContainer.get_service() para obter o servico pronto para uso
+emprestimo/api.py              -> Usa EmprestimoContainer.get_service() para obter o servico pronto para uso
+```
+
+### Exemplo concreto: Componente Leitor
+
+```
+leitor/interfaces.py       -> Define ILeitorRepository e ILeitorService (contratos abstratos)
+leitor/repositories.py     -> LeitorRepository implementa ILeitorRepository (acesso ao banco via Django ORM)
+leitor/services.py         -> ILeitor implementa ILeitorService, recebe ILeitorRepository no construtor
+leitor/container.py        -> LeitorContainer cria LeitorRepository e injeta em ILeitor (Singleton)
+leitor/views.py            -> Usa LeitorContainer.get_service() para obter o servico pronto para uso
+leitor/api.py              -> Usa LeitorContainer.get_service() para obter o servico pronto para uso
 ```
 
 ### Beneficios desta abordagem
@@ -154,3 +173,4 @@ livro/api.py              -> Usa LivroContainer.get_service() para obter o servi
 - **Testabilidade**: E possivel substituir o Repository por um mock nos testes (via `Container.reset()`)
 - **Principio da Inversao de Dependencia (DIP)**: Modulos de alto nivel (Service) dependem de abstracoes (interfaces), nao de implementacoes concretas
 - **Singleton**: Garante uma unica instancia por componente, evitando criacao desnecessaria de objetos
+- **Composicao entre componentes**: O EmprestimoContainer reutiliza o LeitorContainer para obter o repositorio de leitores, demonstrando como a DI facilita a integracao entre componentes sem acoplamento direto

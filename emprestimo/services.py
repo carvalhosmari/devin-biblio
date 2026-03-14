@@ -14,7 +14,7 @@ MAX_RENOVACOES = 2
 MULTA_POR_DIA = Decimal('1.00')
 
 
-class EmprestimoService(IEmprestimoService):
+class IEmprestimo(IEmprestimoService):
     """Implementacao concreta do servico de Emprestimo com injecao de dependencia."""
 
     def __init__(

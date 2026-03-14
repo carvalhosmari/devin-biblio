@@ -1,6 +1,6 @@
 from emprestimo.interfaces import IEmprestimoRepository, IEmprestimoService
 from emprestimo.repositories import EmprestimoRepository
-from emprestimo.services import EmprestimoService
+from emprestimo.services import IEmprestimo
 from leitor.container import LeitorContainer
 
 
@@ -19,7 +19,7 @@ class EmprestimoContainer:
     @classmethod
     def get_service(cls) -> IEmprestimoService:
         if cls._service_instance is None:
-            cls._service_instance = EmprestimoService(
+            cls._service_instance = IEmprestimo(
                 emprestimo_repository=cls.get_repository(),
                 leitor_repository=LeitorContainer.get_repository(),
             )

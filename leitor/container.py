@@ -1,6 +1,6 @@
 from leitor.interfaces import ILeitorRepository, ILeitorService
 from leitor.repositories import LeitorRepository
-from leitor.services import LeitorService
+from leitor.services import ILeitor
 
 
 class LeitorContainer:
@@ -18,7 +18,7 @@ class LeitorContainer:
     @classmethod
     def get_service(cls) -> ILeitorService:
         if cls._service_instance is None:
-            cls._service_instance = LeitorService(
+            cls._service_instance = ILeitor(
                 repository=cls.get_repository()
             )
         return cls._service_instance
