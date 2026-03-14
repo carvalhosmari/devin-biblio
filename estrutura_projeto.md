@@ -111,7 +111,7 @@ Views/API  -->  Container.get_service()  -->  Service(repository)  -->  Reposito
 
 2. O **Container** verifica se ja existe uma instancia (Singleton). Se nao, cria o **Repository** e injeta no **Service**:
    ```python
-   cls._service_instance = EmprestimoService(
+   cls._service_instance = IEmprestimo(
        emprestimo_repository=cls.get_repository(),
        leitor_repository=LeitorContainer.get_repository(),
    )
@@ -119,7 +119,7 @@ Views/API  -->  Container.get_service()  -->  Service(repository)  -->  Reposito
 
 3. O **Service** recebe os repositorios pelo construtor e os armazena:
    ```python
-   class EmprestimoService(IEmprestimoService):
+   class IEmprestimo(IEmprestimoService):
        def __init__(
            self,
            emprestimo_repository: IEmprestimoRepository,
@@ -138,8 +138,8 @@ O componente Emprestimo demonstra a injecao de dependencia com **multiplas depen
 ```
 emprestimo/interfaces.py       -> Define IEmprestimoRepository e IEmprestimoService (contratos abstratos)
 emprestimo/repositories.py     -> EmprestimoRepository implementa IEmprestimoRepository (acesso ao banco via Django ORM)
-emprestimo/services.py         -> EmprestimoService implementa IEmprestimoService, recebe IEmprestimoRepository e ILeitorRepository no construtor
-emprestimo/container.py        -> EmprestimoContainer cria EmprestimoRepository e injeta junto com LeitorContainer.get_repository() em EmprestimoService
+emprestimo/services.py         -> IEmprestimo implementa IEmprestimoService, recebe IEmprestimoRepository e ILeitorRepository no construtor
+emprestimo/container.py        -> EmprestimoContainer cria EmprestimoRepository e injeta junto com LeitorContainer.get_repository() em IEmprestimo
 emprestimo/views.py            -> Usa EmprestimoContainer.get_service() para obter o servico pronto para uso
 emprestimo/api.py              -> Usa EmprestimoContainer.get_service() para obter o servico pronto para uso
 ```
@@ -149,8 +149,8 @@ emprestimo/api.py              -> Usa EmprestimoContainer.get_service() para obt
 ```
 leitor/interfaces.py       -> Define ILeitorRepository e ILeitorService (contratos abstratos)
 leitor/repositories.py     -> LeitorRepository implementa ILeitorRepository (acesso ao banco via Django ORM)
-leitor/services.py         -> LeitorService implementa ILeitorService, recebe ILeitorRepository no construtor
-leitor/container.py        -> LeitorContainer cria LeitorRepository e injeta em LeitorService (Singleton)
+leitor/services.py         -> ILeitor implementa ILeitorService, recebe ILeitorRepository no construtor
+leitor/container.py        -> LeitorContainer cria LeitorRepository e injeta em ILeitor (Singleton)
 leitor/views.py            -> Usa LeitorContainer.get_service() para obter o servico pronto para uso
 leitor/api.py              -> Usa LeitorContainer.get_service() para obter o servico pronto para uso
 ```

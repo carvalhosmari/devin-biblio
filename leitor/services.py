@@ -4,7 +4,7 @@ from leitor.interfaces import ILeitorRepository, ILeitorService
 from leitor.models import Leitor
 
 
-class LeitorService(ILeitorService):
+class ILeitor(ILeitorService):
     """Implementacao concreta do servico de Leitor com injecao de dependencia."""
 
     def __init__(self, repository: ILeitorRepository):

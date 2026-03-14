@@ -35,7 +35,7 @@ COMPONENTE: LEITOR - Passo a Passo da Implementacao
    - Utiliza Django ORM para operacoes no banco de dados
 
 6. SERVICO (leitor/services.py)
-   - LeitorService: implementacao concreta de ILeitorService
+   - ILeitor: implementacao concreta de ILeitorService
    - Recebe ILeitorRepository via injecao de dependencia no construtor
    - Regra de negocio: nao cadastrar leitor com email duplicado
    - Regra de negocio: validacao de email unico ao atualizar

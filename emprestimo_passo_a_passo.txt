@@ -31,7 +31,7 @@ COMPONENTE EMPRESTIMO - PASSO A PASSO DA IMPLEMENTACAO
    - Arquivo: emprestimo/repositories.py
 
 5. SERVICO DE NEGOCIO
-   - EmprestimoService implementa IEmprestimoService
+   - IEmprestimo implementa IEmprestimoService
    - Recebe IEmprestimoRepository e ILeitorRepository via construtor (DI)
    - Regras implementadas:
      * Prazo padrao: 7 dias
