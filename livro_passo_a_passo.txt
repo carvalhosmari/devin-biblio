@@ -1,0 +1,94 @@
+COMPONENTE LIVRO - PASSO A PASSO DA IMPLEMENTACAO
+===================================================
+
+1. INTERFACES (livro/interfaces.py)
+   - Criada interface ILivroRepository com metodos:
+     * criar(dados) - Cria um novo livro no banco
+     * atualizar(id_livro, dados) - Atualiza um livro existente
+     * listar_todos() - Lista todos os livros
+     * buscar_por_id(id_livro) - Busca livro por ID
+     * buscar_por_isbn(isbn) - Busca livros por ISBN
+     * pesquisar(filtro) - Pesquisa livros por titulo, autor, editora ou ISBN
+   - Criada interface ILivroService com metodos conforme especificacao:
+     * cadastrar_livro(isbn, quantidade) - Cadastra livro(s) via ISBN usando Google Books API
+     * editar_livro(id_livro, dados) - Edita informacoes do livro
+     * listar_livros() - Lista todos os livros
+     * pesquisar_livros(filtro) - Pesquisa livros por filtro
+     * visualizar_detalhes_livro(isbn) - Visualiza detalhes agrupados por ISBN
+     * atualizar_estoque(isbn, id_livro) - Alterna status disponivel <-> emprestado
+     * validar_livro(isbn) - Valida ISBN-10 e ISBN-13
+
+2. REPOSITORIO (livro/repositories.py)
+   - Implementacao concreta LivroRepository usando Django ORM
+   - Pesquisa com Q objects para busca em multiplos campos (titulo, autores, editora, isbn)
+
+3. SERVICO (livro/services.py)
+   - Implementacao concreta ILivro com injecao de dependencia (recebe ILivroRepository)
+   - Integracao com API Google Books:
+     * Busca informacoes do livro pelo ISBN (titulo, autores, editora, edicao, pais)
+     * Usa API Key configurada via variavel de ambiente GOOGLE_BOOKS_API_KEY
+     * Fallback gracioso em caso de erro na API
+   - Validacao de ISBN:
+     * Suporte a ISBN-10 (com digito verificador incluindo X)
+     * Suporte a ISBN-13 (validacao por modulo 10)
+     * Limpeza automatica de hifens e espacos
+   - Cadastro por quantidade:
+     * Usuario informa ISBN e quantidade de exemplares
+     * Sistema cria N exemplares com mesmos dados (cada um com ID unico)
+     * Todos iniciam com status 'disponivel'
+   - Controle de estoque:
+     * Alternancia de status: disponivel <-> emprestado
+
+4. CONTAINER DE INJECAO DE DEPENDENCIA (livro/container.py)
+   - Padrao Singleton para LivroContainer
+   - Metodos get_repository() e get_service() com lazy initialization
+   - Metodo reset() para facilitar testes
+
+5. FORMULARIOS (livro/forms.py)
+   - CadastrarLivroForm: campos ISBN e quantidade (1-50 exemplares)
+   - EditarLivroForm: ModelForm com campos isbn, titulo, autores, pais, editora, edicao
+   - PesquisarLivroForm: campo filtro para busca
+
+6. VIEWS DJANGO (livro/views.py)
+   - listar_livros: Lista livros agrupados por ISBN com pesquisa
+   - cadastrar_livro: Cadastro via ISBN com integracao Google Books
+   - editar_livro: Edicao de informacoes de um exemplar
+   - detalhes_livro: Detalhes do livro com controle de estoque por ISBN
+
+7. TEMPLATES (templates/livro/)
+   - listar.html: Tabela agrupada por ISBN com contagem de exemplares/disponiveis, pesquisa
+   - cadastrar.html: Formulario com ISBN e quantidade, info sobre Google Books
+   - editar.html: Formulario de edicao dos campos do livro
+   - detalhes.html: Informacoes do livro + painel de estoque (total, disponiveis, emprestados)
+
+8. ROTAS DJANGO (livro/urls.py)
+   - /livro/ - Listar livros
+   - /livro/cadastrar/ - Cadastrar livro
+   - /livro/<id>/editar/ - Editar livro
+   - /livro/isbn/<isbn>/detalhes/ - Detalhes por ISBN
+
+9. API REST FASTAPI (livro/api.py)
+   - GET /api/livros - Listar livros (com filtro opcional)
+   - POST /api/livros - Cadastrar livro(s) via ISBN
+   - PUT /api/livros/{id} - Editar livro
+   - GET /api/livros/isbn/{isbn} - Detalhes por ISBN
+   - POST /api/livros/{id}/estoque - Atualizar estoque
+   - GET /api/livros/validar/{isbn} - Validar ISBN
+
+10. INTEGRACAO COM SISTEMA
+    - Adicionado link "Livros" na barra de navegacao (base.html)
+    - Registradas rotas no urls.py principal
+    - Adicionada variavel GOOGLE_BOOKS_API_KEY no .env e .env.example
+    - App 'livro' ja estava em INSTALLED_APPS
+
+ORDEM DE IMPLEMENTACAO:
+1. Interfaces abstratas (ILivroRepository, ILivroService)
+2. Repositorio concreto (LivroRepository)
+3. Servico com Google Books API e validacao ISBN (ILivro)
+4. Container de injecao de dependencia (LivroContainer)
+5. Formularios Django (CadastrarLivroForm, EditarLivroForm, PesquisarLivroForm)
+6. Views Django (listar, cadastrar, editar, detalhes)
+7. Templates HTML com Bootstrap 5
+8. Rotas Django
+9. API REST FastAPI
+10. Integracao com navegacao e configuracao
