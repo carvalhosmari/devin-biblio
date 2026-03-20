@@ -36,6 +36,8 @@
                 <td>
                     {% if info.emprestimo.status == 'ativo' %}
                         <span class="badge bg-success">Ativo</span>
+                    {% elif info.emprestimo.status == 'devolvido' %}
+                        <span class="badge bg-secondary">Devolvido</span>
                     {% elif info.emprestimo.status == 'atrasado' %}
                         <span class="badge bg-danger">Atrasado ({{ info.dias_atraso }} dias)</span>
                     {% elif info.emprestimo.status == 'renovado' %}

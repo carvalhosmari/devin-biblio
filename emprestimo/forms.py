@@ -6,7 +6,7 @@ from livro.models import Livro
 
 class RegistrarEmprestimoForm(forms.Form):
     id_leitor = forms.ModelChoiceField(
-        queryset=Leitor.objects.none(),
+        queryset=Leitor.objects.all(),
         label='Leitor',
         widget=forms.Select(attrs={'class': 'form-control'}),
         empty_label='Selecione um leitor',

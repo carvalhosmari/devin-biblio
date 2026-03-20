@@ -42,7 +42,8 @@ class ILivro(ILivroService):
                 'status': 'disponivel',
             })
             livros_criados.append(livro)
-
+            print(f"Livro cadastrado: {livro})")
+        
         return livros_criados
 
     def editar_livro(self, id_livro: int, dados: dict) -> Optional[Livro]:
@@ -124,10 +125,11 @@ class ILivro(ILivroService):
                 return {'titulo': isbn, 'autores': 'Desconhecido'}
 
             volume = data['items'][0]['volumeInfo']
+            access_info = data['items'][0].get('accessInfo', {})
             return {
                 'titulo': volume.get('title', 'Titulo nao encontrado'),
                 'autores': ', '.join(volume.get('authors', ['Autor desconhecido'])),
-                'pais': volume.get('country', ''),
+                'pais': access_info.get('country', ''),
                 'editora': volume.get('publisher', ''),
                 'edicao': volume.get('edition', ''),
             }
