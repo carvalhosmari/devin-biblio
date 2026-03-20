@@ -1,0 +1,103 @@
+=============================================================
+COMPONENTE EMPRESTIMO - PASSO A PASSO DA IMPLEMENTACAO
+=============================================================
+
+1. MODELO LIVRO (MINIMO PARA FK)
+   - Criado app Django 'livro' com modelo Livro contendo campos:
+     isbn, titulo, autores, pais, editora, edicao, status
+   - Status com choices: disponivel, emprestado
+   - Registrado no admin do Django
+   - Arquivo: livro/models.py, livro/admin.py
+
+2. MODELO EMPRESTIMO
+   - Criado app Django 'emprestimo' com modelo Emprestimo contendo campos:
+     id_leitor (FK->Leitor), id_livro (FK->Livro), data_emprestimo (auto),
+     data_devolucao (nullable), data_limite, status, renovacoes
+   - Status com choices: ativo, devolvido, atrasado, renovado
+   - Arquivo: emprestimo/models.py
+
+3. INTERFACES ABSTRATAS (INJECAO DE DEPENDENCIA)
+   - IEmprestimoRepository: criar, atualizar, buscar_por_id, listar_ativos,
+     listar_por_leitor, buscar_pendencias_leitor
+   - IEmprestimoService: registrar_emprestimo, registrar_devolucao,
+     renovar_emprestimo, visualizar_emprestimos_ativos, validar_leitor,
+     validar_prazo
+   - Arquivo: emprestimo/interfaces.py
+
+4. REPOSITORIO CONCRETO
+   - EmprestimoRepository implementa IEmprestimoRepository
+   - Usa Django ORM com select_related para otimizar queries FK
+   - Atualiza automaticamente status para 'atrasado' ao buscar pendencias
+   - Arquivo: emprestimo/repositories.py
+
+5. SERVICO DE NEGOCIO
+   - IEmprestimo implementa IEmprestimoService
+   - Recebe IEmprestimoRepository e ILeitorRepository via construtor (DI)
+   - Regras implementadas:
+     * Prazo padrao: 7 dias
+     * Maximo de renovacoes: 2 vezes
+     * Renovacao cria novo emprestimo com 14 dias
+     * Leitor deve estar ativo
+     * Livro deve estar disponivel
+     * Leitor nao pode ter pendencias de devolucao
+     * Devolucao e emprestimo atualizam status do livro
+     * Multa: R$1,00 por dia de atraso
+   - Arquivo: emprestimo/services.py
+
+6. CONTAINER DE INJECAO DE DEPENDENCIA
+   - EmprestimoContainer (Singleton) gerencia instancias do repositorio e servico
+   - Integra com LeitorContainer para obter ILeitorRepository
+   - Metodo reset() para testes
+   - Arquivo: emprestimo/container.py
+
+7. FORMULARIOS DJANGO
+   - RegistrarEmprestimoForm com selecao de leitor ativo e livro disponivel
+   - Arquivo: emprestimo/forms.py
+
+8. VIEWS DJANGO (MVT)
+   - listar_emprestimos: lista emprestimos ativos com info de prazo e multa
+   - registrar_emprestimo: formulario para novo emprestimo
+   - registrar_devolucao: confirma e processa devolucao
+   - renovar_emprestimo: renova emprestimo ativo
+   - detalhes_emprestimo: exibe detalhes com info de prazo
+   - Arquivo: emprestimo/views.py
+
+9. TEMPLATES HTML (BOOTSTRAP 5)
+   - templates/emprestimo/listar.html: tabela com emprestimos ativos, badges de status,
+     indicacao de atraso (linha vermelha), botoes de acao
+   - templates/emprestimo/registrar.html: formulario com selecao de leitor e livro,
+     informacoes sobre regras de emprestimo
+   - templates/emprestimo/detalhes.html: detalhes completos do emprestimo com
+     informacoes de prazo, multa e acoes disponiveis
+
+10. ROTAS URL
+    - emprestimo/ -> listar emprestimos
+    - emprestimo/registrar/ -> novo emprestimo
+    - emprestimo/<id>/devolver/ -> registrar devolucao
+    - emprestimo/<id>/renovar/ -> renovar emprestimo
+    - emprestimo/<id>/detalhes/ -> ver detalhes
+    - Arquivo: emprestimo/urls.py
+
+11. API REST (FASTAPI)
+    - GET /api/emprestimos -> listar emprestimos ativos (filtro por leitor)
+    - POST /api/emprestimos -> registrar novo emprestimo
+    - POST /api/emprestimos/{id}/devolver -> registrar devolucao
+    - POST /api/emprestimos/{id}/renovar -> renovar emprestimo
+    - GET /api/emprestimos/{id}/prazo -> verificar prazo e multa
+    - Arquivo: emprestimo/api.py
+
+12. INTEGRACAO COM LEITOR
+    - Atualizado leitor/views.py para buscar historico real de emprestimos
+    - Atualizado templates/leitor/perfil.html para exibir emprestimos com:
+      ID (link para detalhes), livro, data, devolucao, status (badge colorido)
+    - Adicionado link "Emprestimos" no navbar (templates/base.html)
+
+13. CONFIGURACAO DO PROJETO
+    - Registrado apps 'emprestimo' e 'livro' em INSTALLED_APPS (settings.py)
+    - Adicionada rota emprestimo/ em urls.py do projeto
+    - Criadas migracoes para livro e emprestimo
+
+14. ADMIN DJANGO
+    - EmprestimoAdmin com list_display, list_filter e search_fields
+    - LivroAdmin com list_display, list_filter e search_fields
+    - Arquivo: emprestimo/admin.py, livro/admin.py

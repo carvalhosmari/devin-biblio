@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil - {{ leitor.nome }} - Bibliomania{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h4><i class="bi bi-person"></i> Perfil do Leitor</h4>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th>ID:</th>
+                        <td>{{ leitor.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nome:</th>
+                        <td>{{ leitor.nome }}</td>
+                    </tr>
+                    <tr>
+                        <th>CPF:</th>
+                        <td>{{ leitor.cpf }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td>{{ leitor.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Telefone:</th>
+                        <td>{{ leitor.telefone|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Endereco:</th>
+                        <td>{{ leitor.endereco|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Data de Cadastro:</th>
+                        <td>{{ leitor.data_cadastro|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status:</th>
+                        <td>
+                            {% if leitor.ativo %}
+                                <span class="badge bg-success">Ativo</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inativo</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'leitor:editar' leitor.id %}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a href="{% url 'leitor:listar' %}" class="btn btn-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h4><i class="bi bi-clock-history"></i> Historico de Emprestimos</h4>
+            </div>
+            <div class="card-body">
+                {% if emprestimos %}
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Livro</th>
+                                <th>Data</th>
+                                <th>Devolucao</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for emp in emprestimos %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'emprestimo:detalhes' emp.id %}">
+                                        #{{ emp.id }}
+                                    </a>
+                                </td>
+                                <td>{{ emp.id_livro.titulo }}</td>
+                                <td>{{ emp.data_emprestimo|date:"d/m/Y" }}</td>
+                                <td>{{ emp.data_devolucao|date:"d/m/Y"|default:"-" }}</td>
+                                <td>
+                                    {% if emp.status == 'ativo' %}
+                                        <span class="badge bg-success">Ativo</span>
+                                    {% elif emp.status == 'devolvido' %}
+                                        <span class="badge bg-secondary">Devolvido</span>
+                                    {% elif emp.status == 'atrasado' %}
+                                        <span class="badge bg-danger">Atrasado</span>
+                                    {% elif emp.status == 'renovado' %}
+                                        <span class="badge bg-warning text-dark">Renovado</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="text-muted">
+                        <i class="bi bi-info-circle"></i> Nenhum emprestimo registrado.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
