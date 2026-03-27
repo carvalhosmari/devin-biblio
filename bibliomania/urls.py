@@ -7,5 +7,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('leitor/', include('leitor.urls')),
     path('emprestimo/', include('emprestimo.urls')),
-    path('', lambda request: redirect('leitor:listar'), name='home'),
+    path('livro/', include('livro.urls')),
+    path('', include('index.urls')),
 ]

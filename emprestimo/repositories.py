@@ -34,7 +34,7 @@ class EmprestimoRepository(IEmprestimoRepository):
 
     def listar_ativos(self, id_leitor: int | None = None) -> list[Emprestimo]:
         qs = Emprestimo.objects.select_related('id_leitor', 'id_livro').filter(
-            status__in=['ativo', 'atrasado', 'renovado']
+            status__in=['ativo', 'atrasado', 'renovado', 'devolvido']
         )
         if id_leitor is not None:
             qs = qs.filter(id_leitor_id=id_leitor)

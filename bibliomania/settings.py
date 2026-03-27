@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'leitor',
     'livro',
     'emprestimo',
+    'index',
 ]
 
 MIDDLEWARE = [
